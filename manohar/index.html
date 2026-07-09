@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Diya & Manohar — Wedding Invitation</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Cinzel:wght@500;600&family=Parisienne&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBF3EC;
+    --cream-deep:#F3E6DA;
+    --blush:#F6D9E0;
+    --rose:#DDA3AF;
+    --rose-deep:#B96E7E;
+    --burgundy:#6E2A3D;
+    --gold:#B8935A;
+    --gold-light:#E8CFA0;
+    --marigold:#E8B84B;
+    --marigold-deep:#C9902E;
+    --plum:#5C2A44;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent; }
+  html,body{
+    height:100%;
+    overflow:hidden;
+    background:#111;
+    font-family:'Cormorant Garamond', serif;
+    color:var(--burgundy);
+    user-select:none;
+    -webkit-user-select:none;
+  }
+
+  /* Audio player styling */
+  .audio-control{
+    position:fixed; top:20px; right:20px; z-index:150;
+    background:rgba(255,255,255,0.85);
+    border:1px solid var(--gold-light);
+    color:var(--burgundy);
+    width:38px; height:38px; border-radius:50%;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; box-shadow:0 4px 10px rgba(0,0,0,0.1);
+    transition:all 0.3s ease;
+  }
+  .audio-control:hover{ transform:scale(1.05); background:#fff; }
+  .audio-control svg{ width:18px; height:18px; fill:currentColor; }
+
+  /* Deck & Slides */
+  .deck{
+    width:100%; height:100%;
+    position:relative; overflow:hidden;
+    background:#111;
+  }
+  .slide{
+    position:absolute; top:0; left:0; width:100%; height:100%;
+    opacity:0; pointer-events:none;
+    transition:opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    display:flex; align-items:center; justify-content:center;
+    padding:24px 20px;
+    box-sizing:border-box;
+  }
+  .slide.active{ opacity:1; pointer-events:auto; z-index:10; }
+
+  /* Slide Outer Container & Golden Frame border */
+  .slide-inner{
+    width:100%; max-width:400px;
+    height:100%; max-height:680px;
+    background:var(--cream);
+    border:1px solid var(--gold-light);
+    border-radius:12px;
+    box-shadow:0 15px 45px rgba(0,0,0,0.25);
+    position:relative;
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:space-between;
+    padding:40px 24px;
+    text-align:center;
+    overflow:hidden;
+    box-sizing:border-box;
+  }
+  /* Decorative frame line */
+  .slide-inner::before{
+    content:''; position:absolute;
+    top:12px; left:12px; right:12px; bottom:12px;
+    border:1px solid rgba(184,147,90,0.3);
+    border-radius:8px;
+    pointer-events:none;
+  }
+
+  /* Typography */
+  .eyebrow{
+    font-family:'Cinzel', serif;
+    font-size:11px; letter-spacing:3px;
+    text-transform:uppercase;
+    color:var(--rose-deep);
+    margin-bottom:8px;
+  }
+  .main-title{
+    font-family:'Parisienne', cursive;
+    font-size:52px; color:var(--burgundy);
+    margin:12px 0; line-height:1;
+  }
+  .serif-sub{
+    font-size:18px; font-weight:400;
+    letter-spacing:1px; line-height:1.5;
+  }
+
+  /* Navigation Overlay buttons */
+  .nav-btn{
+    position:absolute; top:50%; transform:translateY(-50%);
+    width:40px; height:40px; background:rgba(255,255,255,0.7);
+    border-radius:50%; border:none; z-index:100;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer; color:var(--burgundy);
+    box-shadow:0 2px 10px rgba(0,0,0,0.1);
+  }
+  .nav-btn:hover{ background:#fff; }
+  .nav-btn-prev{ left:8px; }
+  .nav-btn-next{ right:8px; }
+
+  /* Quick Navigation indicators */
+  .quick-nav{
+    position:absolute; bottom:24px; left:50%; transform:translateX(-50%);
+    display:flex; gap:8px; z-index:100;
+  }
+  .quick-nav button{
+    width:8px; height:8px; border-radius:50%; border:none;
+    background:rgba(110,42,61,0.2); cursor:pointer; padding:0;
+    transition:background 0.3s ease;
+  }
+  .quick-nav button.current{
+    background:var(--burgundy); transform:scale(1.2);
+  }
+
+  /* ===== Slide 1: Welcome / Main Cover ===== */
+  .welcome-slide{ background:var(--cream); }
+  .welcome-badge{
+    border:1px solid var(--gold-light);
+    padding:6px 14px; border-radius:30px;
+    font-family:'Cinzel', serif; font-size:10px;
+    letter-spacing:2px; color:var(--gold);
+    background:rgba(255,255,255,0.5);
+    margin-bottom:12px;
+  }
+ 
+  .ganesha-icon{ width:50px; height:auto; margin-bottom:18px; }
+  .infinite-loop{ font-size:15px; margin:16px 0; color:var(--gold); }
+  .save-the-date{
+    font-family:'Cinzel', serif; font-size:15px;
+    letter-spacing:4px; margin-top:20px;
+  }
+
+  /* ===== Slide 2: Photo / our story ===== */
+  .photo-slide{ background:var(--cream); color:var(--burgundy); }
+  .photo-frame{
+    width:320px;
+    height:auto;
+    border:10px solid #361919;
+    outline:1px solid var(--gold-light);
+    box-shadow:0 20px 40px -18px rgba(110,42,61,0.4);
+    background:linear-gradient(145deg, var(--blush), #f2c9d3 60%, var(--rose));
+    display:flex; align-items:center; justify-content:center;
+    margin:0 auto 18px;
+    position:relative;
+    overflow: hidden;
+    border-radius: 4px;
+  }
+
+  /* ===== Slide 3: Haldi ===== */
+  .haldi-slide .slide-inner{ background:#FFFDF2; border-color:#EED078; }
+  .haldi-slide .slide-inner::before{ border-color:rgba(238,208,120,0.4); }
+  .haldi-heading{ font-family:'Parisienne', cursive; font-size:48px; color:#B48A10; }
+  .haldi-decor{ width: 250px;; height:auto; margin-bottom:15px; opacity:0.85; }
+
+  /* ===== Slide 4: Mehndi ===== */
+  .mehndi-slide .slide-inner{ background:#ebedea; border-color:#8EB085; }
+  .mehndi-slide .slide-inner::before{ border-color:rgba(142,176,133,0.4); }
+  .mehndi-heading{ font-family:'Parisienne', cursive; font-size:48px; color:#416838; }
+  .mehndi-decor{ width:200px; height:auto; margin-bottom:15px; opacity:0.85; }
+
+  /* ===== Slide 5: Sangeet ===== */
+  .sangeet-slide .slide-inner{ background:#F4EFF5; border-color:#9D8AA8; }
+  .sangeet-slide .slide-inner::before{ border-color:rgba(157,138,168,0.4); }
+  .sangeet-heading{ font-family:'Parisienne', cursive; font-size:48px; color:#553E65; }
+  .sangeet-decor{ width:170px; height:200px; margin-bottom:15px; opacity:0.85; }
+  
+  /* ===== Slide 6: Wedding Event Details ===== */
+  .event-slide{ background:var(--cream-deep); }
+  .couple2-decor{ width:100px; height:100px; margin-bottom:15px; opacity:0.85; }
+  .event-card{
+    background:#fff; border-radius:10px; width:100%;
+    box-shadow:0 10px 30px rgba(0,0,0,0.05);
+    padding:20px 16px; border:1px solid var(--gold-light);
+    margin:5px 0;
+  }
+  .event-time-place{ font-size:14px; margin-top:8px; line-height:1.4; color:#555; }
+
+  /* ===== Slide 7: RSVP ===== */
+  .rsvp-slide{ background:var(--cream); }
+  .rsvp-contact{ margin:15px 0; font-size:16px; line-height:1.6; }
+  .rsvp-contact strong{ color:var(--rose-deep); }
+
+  /* ===== Envelope Overlay for Opening Interaction ===== */
+  .envelope-overlay{
+    position:fixed; top:0; left:0; width:100%; height:100%;
+    background:#111; z-index:1000;
+    display:flex; align-items:center; justify-content:center;
+    transition:transform 0.8s cubic-bezier(0.77, 0, 0.175, 1);
+  }
+  .envelope-overlay.opened{
+    transform:translateY(-100%);
+  }
+  .envelope-card{
+    width:90%; max-width:360px; height:460px;
+    background:var(--cream-deep);
+    border-radius:10px; border:2px solid var(--gold);
+    box-shadow:0 20px 50px rgba(0,0,0,0.5);
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    padding:30px; text-align:center;
+    cursor:pointer; position:relative;
+  }
+  .envelope-card::before{
+    content:''; position:absolute;
+    top:8px; left:8px; right:8px; bottom:8px;
+    border:1px dashed var(--gold); border-radius:6px;
+  }
+  .envelope-seal{
+    width:70px; height:70px; background:var(--burgundy);
+    border-radius:50%; border:2px solid var(--gold-light);
+    display:flex; align-items:center; justify-content:center;
+    color:var(--gold-light); font-size:24px; font-weight:bold;
+    margin:25px 0; box-shadow:0 8px 16px rgba(0,0,0,0.2);
+    animation:pulse 2s infinite;
+  }
+  @keyframes pulse{
+    0% { transform:scale(1); }
+    50% { transform:scale(1.06); }
+    100% { transform:scale(1); }
+  }
+
+  /* Countdown Widget styling */
+  .countdown-widget{
+    display:flex; gap:10px; margin-top:15px;
+  }
+  .countdown-item{
+    background:rgba(255,255,255,0.7);
+    border:1px solid var(--gold-light);
+    border-radius:6px; width:48px; padding:6px 0;
+    text-align:center;
+  }
+  .countdown-val{ font-size:16px; font-weight:bold; color:var(--burgundy); }
+  .countdown-lbl{ font-size:9px; text-transform:uppercase; color:var(--gold); }
+
+</style>
+</head>
+<body>
+
+  <!-- Audio element (Using free ambient piano track as placeholder) -->
+  <audio id="bg-music" loop src=""></audio>
+
+  <!-- Global Audio Toggle Control -->
+  <div class="audio-control" id="audio-toggle">
+    <!-- Speaker Play Icon -->
+    <svg id="icon-play" viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/></svg>
+    <!-- Speaker Mute Icon (hidden by default) -->
+    <svg id="icon-mute" style="display:none;" viewBox="0 0 24 24"><path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.21.05-.42.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/></svg>
+  </div>
+
+  <!-- Envelope Opening Screen -->
+  <div class="envelope-overlay" id="envelope-overlay">
+    <div class="envelope-card" id="envelope">
+      <p class="eyebrow">The Wedding Invitation of</p>
+      <p style="font-family:'Parisienne', cursive; font-size:42px; color:var(--burgundy); margin:10px 0;">Diya & Manohar</p>
+      <p style="font-size:15px; color:var(--gold); letter-spacing:1px;">Click anywhere to open the envelope</p>
+      <div class="envelope-seal">♥</div>
+      <p class="serif-sub" style="font-size:14px; opacity:0.8;">Shubh Vivah<br>8th August 2026</p>
+    </div>
+  </div>
+
+  <div class="deck">
+
+    <!-- Navigation Arrows -->
+    <button class="nav-btn nav-btn-prev" id="prev-btn">◀</button>
+    <button class="nav-btn nav-btn-next" id="next-btn">▶</button>
+
+    <!-- Quick Navigation Bottom Indicators -->
+    <div class="quick-nav" id="quick-nav">
+      <button data-goto="0"></button>
+      <button data-goto="1"></button>
+      <button data-goto="2"></button>
+      <button data-goto="3"></button>
+      <button data-goto="4"></button>
+      <button data-goto="5"></button>
+      <button data-goto="6"></button>
+    </div>
+
+    <!-- Slide 1: Cover Page -->
+    <section class="slide welcome-slide">
+      <div class="slide-inner">
+        <div>
+          <img class="ganesha-icon" src="ganesha.png" alt="Ganesha Logo">
+          <p class="welcome-badge">Shree Ganeshay Namah</p>
+        </div>
+
+        <div>
+          <p class="eyebrow">Are Cordially Invited To The Wedding Of</p>
+          <h1 class="main-title">Diya<br><span style="font-size:24px; font-family:'Cinzel', serif; letter-spacing:4px;">&</span><br>Manohar</h1>
+          <div class="infinite-loop">∞</div>
+          <p class="serif-sub">On Saturday, 8th August 2026</p>
+          
+        </div>
+
+        <div>
+          <p class="save-the-date" style="color:var(--gold);">Save The Date</p>
+          <div class="countdown-widget">
+            <div class="countdown-item"><div class="countdown-val" id="cd-days">00</div><div class="countdown-lbl">Days</div></div>
+            <div class="countdown-item"><div class="countdown-val" id="cd-hours">00</div><div class="countdown-lbl">Hrs</div></div>
+            <div class="countdown-item"><div class="countdown-val" id="cd-mins">00</div><div class="countdown-lbl">Min</div></div>
+            <div class="countdown-item"><div class="countdown-val" id="cd-secs">00</div><div class="countdown-lbl">Sec</div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 2: Photo / Our Story -->
+    <section class="slide photo-slide">
+      <div class="slide-inner">
+        <p class="eyebrow" style="font-size: 26px; style="color:var(--gold);">Our Story</p>
+        <div class="photo-frame">
+          <!-- Video ka actual ratio bina crop hue perfect fit dikhega -->
+          <video autoplay muted loop playsinline class="story-video" style="width: 100%; height: auto; display: block; object-fit: contain;">
+            <source src="video.mp4" type="video/mp4">
+            <source src="video.webm" type="video/webm">
+            <source src="video" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
+        </div>
+        <p class="poster-sub" style="font-size: 26px; margin-bottom: 30px; max-width: 240px; line-height: 1.4;">Two hearts, one soul. Watch our journey as we step into our beautiful forever.</p>
+      </div>
+    </section>
+
+    <!-- Slide 3: Haldi -->
+    <section class="slide haldi-slide">
+      <div class="slide-inner">
+        <p class="eyebrow" style="color:#B48A10;">Subh Haldi Ceremony</p>
+        <img class="haldi-decor" src="haldi.png" alt="Haldi Decor">
+        <h2 class="haldi-heading">Haldi</h2>
+        <div style="margin:20px 0;">
+          <p class="serif-sub" style="font-weight:600; color:#555;">Join us for a splash of golden hues, love and laughter!</p>
+          <p class="serif-sub" style="font-size:16px; margin-top:8px; color:#666;">Apply the paste of turmeric and showers of blessings.</p>
+        </div>
+        <div class="event-time-place" style="border-top:1px dashed rgba(180,138,16,0.3); padding-top:15px; width:100%;">
+          <p><strong>Date:</strong> Friday, 7th August 2026</p>
+          <p><strong>Time:</strong> 10:30 AM Onwards</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 4: Mehndi -->
+    <section class="slide mehndi-slide">
+      <div class="slide-inner">
+        <p class="eyebrow" style="color:#416838;">Mehndi Celebration</p>
+        <img class="mehndi-decor" src="mahendi.png" alt="Mehndi Decor" style="filter: hue-rotate(40deg);">
+        <h2 class="mehndi-heading">Mehndi</h2>
+        <div style="margin:20px 0;">
+          <p class="serif-sub" style="font-weight:600; color:#444;">Deep green stains of love on delicate hands.</p>
+          <p class="serif-sub" style="font-size:16px; margin-top:8px; color:#555;">Join us as we adorn hands with beautiful intricate designs and dance to the rhythm of dhol.</p>
+        </div>
+        <div class="event-time-place" style="border-top:1px dashed rgba(65,104,56,0.3); padding-top:15px; width:100%;">
+          <p><strong>Date:</strong> Friday, 7th August 2026</p>
+          <p><strong>Time:</strong> 04:00 PM Onwards</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 5: Sangeet -->
+    <section class="slide sangeet-slide">
+      <div class="slide-inner">
+        <p class="eyebrow" style="color:#553E65;">Musical Night</p>
+        <img class="sangeet-decor" src="sangeet.png" alt="Sangeet Decor">
+        <h2 class="sangeet-heading">Sangeet</h2>
+        <div style="margin:20px 0;">
+          <p class="serif-sub" style="font-weight:600; color:#444;">Put on your dancing shoes and dance your heart out!</p>
+          <p class="serif-sub" style="font-size:16px; margin-top:8px; color:#555;">Let us celebrate love, laughter, and happily ever after with endless beats and cheerful steps.</p>
+        </div>
+        <div class="event-time-place" style="border-top:1px dashed rgba(85,62,101,0.3); padding-top:15px; width:100%;">
+          <p><strong>Date:</strong> Friday, 7th August 2026</p>
+          <p><strong>Time:</strong> 07:30 PM Onwards</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 6: Main Wedding Detail -->
+    <section class="slide event-slide">
+      <div class="slide-inner" style="justify-content:center;">
+        <p class="eyebrow">The Main Auspicious Event</p>
+        <h2 style="font-family:'Cinzel', serif; font-size:26px; color:var(--burgundy); letter-spacing:2px; margin-bottom:5px;">Shubh Vivah</h2>
+        <div style="width:30px; height:1px; background:var(--gold); margin:10px auto;"></div>
+        <img class="couple2-decor" src="couple2.jpg" alt="Couple Decor">
+        <div class="event-card">
+          <p style="font-size:11px; font-family:'Cinzel', serif; letter-spacing:2px; color:var(--gold);">BARAAT AGAMANI</p>
+          <p class="event-time-place"><strong>Saturday, 8th August 2026</strong><br>Time: 07:30 PM</p>
+        </div>
+
+        <div class="event-card">
+          <p style="font-size:11px; font-family:'Cinzel', serif; letter-spacing:2px; color:var(--gold);">HAST MILAP & PHERE</p>
+          <p class="event-time-place"><strong>Mid-Night Ceremony</strong><br>According to auspicious Muhurrat</p>
+        </div>
+
+        <div class="event-card" style="margin-bottom:0;">
+          <p style="font-size:11px; font-family:'Cinzel', serif; letter-spacing:2px; color:var(--gold);">VENUE</p>
+          <p class="event-time-place" style="font-weight:600; color:var(--burgundy);">Royal Palace Resort & Gardens</p>
+          <p style="font-size:12px; color:#666; margin-top:3px;">Grand Ball Room, Bypass National Highway, Jaipur, Rajasthan</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Slide 7: RSVP & Footer -->
+    <section class="slide rsvp-slide">
+      <div class="slide-inner" style="justify-content: space-between;">
+        <p class="eyebrow" style="color:var(--gold);">Warm Regards</p>
+
+        <div>
+          <p style="font-size:15px; letter-spacing:1px; color:#555; font-style:italic;">With best compliments from:</p>
+          <p style="font-family:'Cinzel', serif; font-size:18px; margin-top:8px; color:var(--burgundy);">All Near and Dear Ones</p>
+        </div>
+
+        <div style="border-top:1px solid rgba(184,147,90,0.2); width:100%; padding-top:20px;">
+          <p class="eyebrow" style="font-size:10px; margin-bottom:12px;">R.S.V.P</p>
+          <div class="rsvp-contact">
+            <p><strong>Rahul Sharma:</strong> +91 98765 43210</p>
+            <p><strong>Priya Sharma:</strong> +91 87654 32109</p>
+          </div>
+        </div>
+
+        <div style="font-size:13px; color:#888;">
+          <p>Please consider this as our personal invitation.</p>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+  // Slide Deck Indexing
+  let idx = 0;
+  const slides = document.querySelectorAll('.slide');
+  const totalSlides = slides.length;
+
+  function render(){
+    slides.forEach((slide, i) => {
+      slide.classList.toggle('active', i === idx);
+    });
+    updateQuickNav();
+  }
+
+  document.getElementById('next-btn').addEventListener('click', () => {
+    idx = (idx + 1) % totalSlides;
+    render();
+  });
+
+  document.getElementById('prev-btn').addEventListener('click', () => {
+    idx = (idx - 1 + totalSlides) % totalSlides;
+    render();
+  });
+
+  // Swipe / Touch support for fluid mobile experience
+  let touchStartX = 0;
+  let touchEndX = 0;
+  const deck = document.querySelector('.deck');
+
+  deck.addEventListener('touchstart', e => {
+    touchStartX = e.changedTouches[0].screenX;
+  }, {passive: true});
+
+  deck.addEventListener('touchend', e => {
+    touchEndX = e.changedTouches[0].screenX;
+    handleSwipe();
+  }, {passive: true});
+
+  function handleSwipe() {
+    const threshold = 50;
+    if (touchStartX - touchEndX > threshold) {
+      // Swiped Left -> Next Slide
+      idx = (idx + 1) % totalSlides;
+      render();
+    } else if (touchEndX - touchStartX > threshold) {
+      // Swiped Right -> Previous Slide
+      idx = (idx - 1 + totalSlides) % totalSlides;
+      render();
+    }
+  }
+
+  // Auto transition configuration (pause on user interaction)
+  let autoTimer = null;
+  function startAutoSlide(){
+    autoTimer = setInterval(() => {
+      idx = (idx + 1) % totalSlides;
+      render();
+    }, 7000);
+  }
+  function pause(){
+    if(autoTimer) clearInterval(autoTimer);
+  }
+  function resume(){
+    pause();
+    startAutoSlide();
+  }
+  // Pause slider on user touch interaction
+  deck.addEventListener('touchstart', pause, {passive:true});
+  deck.addEventListener('mousedown', pause);
+
+  // Background Audio Controller Logics
+  const music = document.getElementById('bg-music');
+  const audioToggle = document.getElementById('audio-toggle');
+  const playIcon = document.getElementById('icon-play');
+  const muteIcon = document.getElementById('icon-mute');
+
+  // Set initial volume low
+  music.volume = 0.35;
+
+  audioToggle.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if(music.paused){
+      playMusic();
+    } else {
+      pauseMusic();
+    }
+  });
+
+  function playMusic(){
+    music.play().then(() => {
+      playIcon.style.display = 'none';
+      muteIcon.style.display = 'block';
+    }).catch(err => console.log("Audio Playback deferred:", err));
+  }
+
+  function pauseMusic(){
+    music.pause();
+    playIcon.style.display = 'block';
+    muteIcon.style.display = 'none';
+  }
+
+  // Envelope Opening interaction
+  const envelopeOverlay = document.getElementById('envelope-overlay');
+  const envelope = document.getElementById('envelope');
+  envelope.addEventListener('click', () => {
+    envelopeOverlay.classList.add('opened');
+    playMusic(); // start ambient track once envelope is opened
+    pause(); // pause background slide transition briefly on open
+    setTimeout(resume, 750);
+  });
+
+  // quick-nav jump buttons
+  document.querySelectorAll('.quick-nav button').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      idx = parseInt(btn.getAttribute('data-goto'), 10);
+      render();
+    });
+  });
+  function updateQuickNav(){
+    document.querySelectorAll('.quick-nav button').forEach(btn => {
+      btn.classList.toggle('current', parseInt(btn.getAttribute('data-goto'),10) === idx);
+    });
+  }
+
+  // countdown timer to 8 Aug 2026, 7:30 PM IST
+  const weddingDate = new Date('2026-08-08T19:30:00+05:30').getTime();
+  function updateCountdown(){
+    const now = Date.now();
+    const diff = Math.max(0, weddingDate - now);
+    const d = Math.floor(diff / (1000*60*60*24));
+    const h = Math.floor((diff / (1000*60*60)) % 24);
+    const m = Math.floor((diff / (1000*60)) % 60);
+    const s = Math.floor((diff / 1000) % 60);
+    document.getElementById('cd-days').textContent = String(d).padStart(2, '0');
+    document.getElementById('cd-hours').textContent = String(h).padStart(2, '0');
+    document.getElementById('cd-mins').textContent = String(m).padStart(2, '0');
+    document.getElementById('cd-secs').textContent = String(s).padStart(2, '0');
+  }
+  setInterval(updateCountdown, 1000);
+  updateCountdown();
+
+  // Initial render setup
+  render();
+  startAutoSlide();
+
+</script>
+</body>
+</html>
